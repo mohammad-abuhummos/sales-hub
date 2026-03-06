@@ -9,6 +9,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+function padZipCode(zip: string): string {
+  const digits = zip.replace(/\D/g, "");
+  if (digits.length === 0) return "";
+  return digits.length < 5 ? digits.padStart(5, "0") : zip;
+}
+
 function parseZipCodesFromFile(file: File): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -26,10 +32,12 @@ function parseZipCodesFromFile(file: File): Promise<string[]> {
         if (extension === "csv") {
           const text = typeof data === "string" ? data : new TextDecoder().decode(data as ArrayBuffer);
           const lines = text.split(/\r?\n/).filter((line) => line.trim());
-          const zips = lines.map((line) => {
-            const firstCol = line.split(",")[0]?.trim() ?? "";
-            return firstCol.replace(/^["']|["']$/g, "");
-          }).filter((zip) => zip.length > 0);
+          const zips = lines
+            .map((line) => {
+              const firstCol = line.split(",")[0]?.trim() ?? "";
+              return padZipCode(firstCol.replace(/^["']|["']$/g, ""));
+            })
+            .filter((zip) => zip.length > 0);
           resolve(zips);
         } else if (["xlsx", "xls"].includes(extension ?? "")) {
           const workbook = XLSX.read(data, { type: "array" });
@@ -42,7 +50,7 @@ function parseZipCodesFromFile(file: File): Promise<string[]> {
             .map((row) => {
               const firstCell = Array.isArray(row) ? row[0] : (row as Record<string, unknown>)[Object.keys(row as Record<string, unknown>)[0]];
               const val = String(firstCell ?? "").trim();
-              return val;
+              return padZipCode(val);
             })
             .filter((zip) => zip.length > 0);
           resolve(zips);
