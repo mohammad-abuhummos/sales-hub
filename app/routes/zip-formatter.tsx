@@ -203,15 +203,39 @@ export default function ZipFormatter() {
 
               {zips.length > 0 && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
                     <span className="text-sm font-medium text-slate-600">
                       {zips.length} zip code{zips.length !== 1 ? "s" : ""} found
                     </span>
-                    <button
-                      type="button"
-                      onClick={copyToClipboard}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-sm"
-                    >
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setZips([]);
+                          setError(null);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                        Clear
+                      </button>
+                      <button
+                        type="button"
+                        onClick={copyToClipboard}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-sm"
+                      >
                       {copied ? (
                         <>
                           <svg
@@ -248,6 +272,7 @@ export default function ZipFormatter() {
                         </>
                       )}
                     </button>
+                    </div>
                   </div>
                   <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 max-h-48 overflow-y-auto">
                     <pre className="text-sm text-slate-600 whitespace-pre-wrap break-all font-mono">
